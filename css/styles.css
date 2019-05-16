@@ -1,0 +1,21 @@
+/* Digital 7 */
+@font-face {
+    font-family: 'Digital 7';
+    src: url(./digital-7/digital-7.ttf);
+}
+
+
+/* 
+
+green #35807c
+field green #00f286
+orange #ffb07a
+yellow #f0fe9d
+blue #2beeff
+grey #e6f2ee
+
+*/
+body {
+    font-family: "Raleway";
+    text-transform: uppercase;
+}
