@@ -6,6 +6,7 @@
 
 
 /* 
+    Colors
 
 green #35807c
 field green #00f286
@@ -13,9 +14,151 @@ orange #ffb07a
 yellow #f0fe9d
 blue #2beeff
 grey #e6f2ee
+black #1b191a
+red #f16359
 
+*/
+
+/* 
+    Base Styles
 */
 body {
     font-family: "Raleway";
     text-transform: uppercase;
+}
+
+h1 {
+    margin: 1rem 0px;
+    text-align: center;
+}
+
+.main {
+    background: #35807c;
+    color: #e6f2ee;
+    text-align: center;
+    width: 350px;
+    margin: auto;
+    border-radius: 5px;
+    padding-top: 2rem;
+    padding-bottom: 4rem;
+    font-size: 12px;
+}
+
+/* 
+    Scoreboard
+*/
+.scoreboard {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    background: #ffffff;
+    color: #2beeff;
+    margin: 1rem;
+}
+.scoreboard-section {
+    width: 33%
+}
+.scoreboard-section-middle {
+    height: 1.5rem;
+    width: 100%;
+    background: #1b191a;
+}
+
+/* 
+    Field
+*/
+.field {
+    display: flex;
+    position: relative;
+    margin: auto;
+    width: 285px;
+    border: 2px solid #00f286;
+}
+.column {
+    width: 10%;
+    border-right: 1px solid #ffffff; 
+}
+.column:last-child {
+    border: 0;
+}
+.row {
+    width: 100%;
+    padding-top: 100%;
+    background-color: #1b191a;
+}
+.row-1,
+.row-2 {
+    border-bottom: 1px solid white;
+    position: relative;
+}
+.row-1::after,
+.row-2::after {
+    content: "";
+    position: absolute;
+    width: 60%;
+    height: 1px;
+    background: #1b191a;
+    left: 50%;
+    transform: translateX(-50%);
+}
+.player {
+    display: none;
+    position: absolute;
+    width: .8rem;
+    height: .8rem;
+    background: #f16359;
+    z-index: 2;
+    top: 6%;
+    left: 5%;
+    transform: translateX(-50%);
+}
+
+/* 
+    Controls
+*/
+.controls {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    margin-top: 2rem;
+}
+.button-column.bottom {
+    align-self: flex-end;
+}
+button {
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 3px;
+    -webkit-appearance: none;
+}
+button.blue {
+    background: #2beeff;
+}
+button.orange {
+    background: #f0fe9d;
+}
+button.arrow {
+    background: #ffb07a;
+}
+button.settings {
+    background: #1b191a;
+}
+.arrow-buttons {
+    text-align: center;
+}
+.arrow-group > div {
+    display: inline-block;
+}
+.arrow-right > div{
+    display: inline-block;
+}
+.arrow-left > div{
+    display: inline-block;
+}
+.arrow-group {
+    vertical-align: middle;
+}
+.arrow-group div,
+.arrow-group button {
+    vertical-align: middle;
 }
