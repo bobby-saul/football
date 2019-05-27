@@ -60,6 +60,10 @@ h1 {
 }
 .scoreboard-section-middle {
     height: 1.5rem;
+    font-size: 1rem;
+    line-height: 1.5rem;
+    font-family: 'Digital 7';
+    color: #f16359;
     width: 100%;
     background: #1b191a;
 }
@@ -108,11 +112,53 @@ h1 {
     height: .8rem;
     background: #f16359;
     z-index: 2;
-    top: 6%;
-    left: 5%;
     transform: translateX(-50%);
 }
-
+.player[data-on-field="false"] {
+    display: none;
+}
+.player[data-on-field="true"] {
+    display: block;
+}
+.player[data-row="1"] {
+    top: 6%;
+}
+.player[data-row="2"] {
+    top: 43%;
+}
+.player[data-row="3"] {
+    top: 76%;
+}
+.player[data-col="1"] {
+    left: 5%;
+}
+.player[data-col="2"] {
+    left: 15%;
+}
+.player[data-col="3"] {
+    left: 25%;
+}
+.player[data-col="4"] {
+    left: 35%;
+}
+.player[data-col="5"] {
+    left: 45%;
+}
+.player[data-col="6"] {
+    left: 55%;
+}
+.player[data-col="7"] {
+    left: 65%;
+}
+.player[data-col="8"] {
+    left: 75%;
+}
+.player[data-col="9"] {
+    left: 85%;
+}
+.player[data-col="10"] {
+    left: 95%;
+}
 /* 
     Controls
 */

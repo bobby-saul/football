@@ -3,8 +3,6 @@
         <title>Football</title>
         <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
         <link rel="stylesheet" href="css/styles.css">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-        <script src="js/app.js"></script>
         <meta name="viewport" content="width=device-width">
     </head>
     <body>
@@ -15,30 +13,30 @@
             <div class="scoreboard">
                 <div class="scoreboard-section">
                     <div class="scoreboard-section-top">Down</div>
-                    <div class="scoreboard-section-middle"></div>
+                    <div id="down" class="scoreboard-section-middle"></div>
                     <div class="scoreboard-section-bottom">Home</div>
                 </div>
                 <div class="scoreboard-section">
                     <div class="scoreboard-section-top">Field Position</div>
-                    <div class="scoreboard-section-middle"></div>
+                    <div id="fieldPosition" class="scoreboard-section-middle"></div>
                     <div class="scoreboard-section-bottom">Time Remaining</div>
                 </div>
                 <div class="scoreboard-section">
                     <div class="scoreboard-section-top">Yards to Go</div>
-                    <div class="scoreboard-section-middle"></div>
+                    <div id="toGo" class="scoreboard-section-middle"></div>
                     <div class="scoreboard-section-bottom">Visitors</div>
                 </div>
             </div>
 
             <div class="field">
-                <div class="player" id="qb" data-player="qb"></div>
-                <div class="player" id="receiver" data-player="receiver"></div>
-                <div class="player" id="d1" data-player="d1"></div>
-                <div class="player" id="d2" data-player="d2"></div>
-                <div class="player" id="d3" data-player="d3"></div>
-                <div class="player" id="d4" data-player="d4"></div>
-                <div class="player" id="d5" data-player="d5"></div>
-                <div class="player" id="d6" data-player="d6"></div>
+                <div class="player" id="qb" data-on-field="false" data-row="1" data-col="1" data-player="qb"></div>
+                <div class="player" id="receiver" data-on-field="false" data-row="1" data-col="1" data-player="receiver"></div>
+                <div class="player" id="d1" data-on-field="false" data-row="1" data-col="1" data-player="d1"></div>
+                <div class="player" id="d2" data-on-field="false" data-row="1" data-col="1" data-player="d2"></div>
+                <div class="player" id="d3" data-on-field="false" data-row="1" data-col="1" data-player="d3"></div>
+                <div class="player" id="d4" data-on-field="false" data-row="1" data-col="1" data-player="d4"></div>
+                <div class="player" id="d5" data-on-field="false" data-row="1" data-col="1" data-player="d5"></div>
+                <div class="player" id="d6" data-on-field="false" data-row="1" data-col="1" data-player="d6"></div>
                 <div class="column-1 column">
                     <div class="row-1 row " data-row="1" data-column="1"></div>
                     <div class="row-2 row" data-row="2" data-column="1"></div>
@@ -95,29 +93,29 @@
                 <div class="button-column">
                     <div class="button-group">
                         <div>Score</div>
-                        <button id="button-score" class="blue" title="Score"></button>
+                        <button id="button-score" class="nonplay-button blue" data-button-type="SCORE" title="Score"></button>
                     </div>
                     <div class="button-group">
                         <div>Status</div>
-                        <button id="button-status" class="blue" title="Status"></button>
+                        <button id="button-status" class="nonplay-button blue"  data-button-type="STATUS" title="Status"></button>
                     </div>
                     <div class="button-group">
                         <div>Kick</div>
-                        <button id="button-kick" class="blue" title="Kick"></button>
+                        <button id="button-kick" class="inplay-button blue"  data-button-type="KICK" title="Kick"></button>
                     </div>
                 </div>
 
                 <div class="button-column">
                     <div class="button-group">
                         <div>Pass</div>
-                        <button id="button-pass" class="orange" title="Pass"></button>
+                        <button id="button-pass" class="inplay-button orange"  data-button-type="PASS" title="Pass"></button>
                     </div>
                 </div>
 
                 <div class="button-column bottom">
                     <div class="button-group">
                         <div>Settings</div>
-                        <button id="button-settings" class="settings" title="Settings"></button>
+                        <button id="button-settings" class="nonplay-button settings"  data-button-type="SETTINGS" title="Settings"></button>
                     </div>
                 </div>
 
@@ -126,25 +124,25 @@
                         <div class="arrow-group">
                             <div class="arrow-up">
                                 <div>&uarr;</div>
-                                <button id="button-up" class="arrow" title="&uarr;"></button>
+                                <button id="button-up" class="inplay-button arrow"  data-button-type="UP" title="&uarr;"></button>
                             </div>
                         </div>
                         <div class="arrow-group">
                             <div class="arrow-left">
                                 <div>&larr;</div>
-                                <button id="button-left" class="arrow" title="&larr;"></button>
+                                <button id="button-left" class="inplay-button arrow" data-button-type="LEFT" title="&larr;"></button>
                             </div>
                             <div>
                                 <div>Run</div>
                             </div>
                             <div class="arrow-right">
-                                <button id="button-right" class="arrow" title="&rarr;"></button>
+                                <button id="button-right" class="inplay-button arrow" data-button-type="RIGHT" title="&rarr;"></button>
                                 <div>&rarr;</div>
                             </div>
                         </div>
                         <div class="arrow-group">
                             <div class="arrow-down">
-                                <button id="button-down" class="arrow" title="&darr;"></button>
+                                <button id="button-down" class="inplay-button arrow" data-button-type="DOWN" title="&darr;"></button>
                                 <div>&darr;</div>
                             </div>
                         </div>
@@ -152,5 +150,10 @@
                 </div>
             </div>
         </div>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="js/player.js"></script>
+        <script src="js/controller.js"></script>
+        <script src="js/game.js"></script>
+        <script src="js/app.js"></script>
     </body>
 </html>
