@@ -102,6 +102,9 @@ class Controller {
                 case this.keys.status:
                 case "STATUS":
                     return { "key": "STATUS", "type": "GAME", "status": 1};
+                case this.keys.score:
+                case "SCORE":
+                    return { "key": "SCORE", "type": "GAME", "status": 1};
                 default:
                     return { "key": e.key.toUpperCase(), "type": "GAME", "status": 1};
             }
