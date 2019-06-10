@@ -4,15 +4,13 @@ class Player {
     /**
      * Creates a Player object.
      * @param {object} element The DOM element of the Player.
-     * @param {boolean} computer Whether the player is a computer.
      */
-    constructor (element, computer) {
+    constructor (element) {
         this.element = element;
-        this.computer = typeof computer !== 'undefined' ? computer : false;
         this.row = 1;
         this.col = 1;
         this.onField = false;
-        this.direction = 1; // 1 = right to left; -1 = left to right;
+        this.direction = 1; // 1 = Visitors (right to left); -1 = Home (left to right);
     }
 
     /**
@@ -33,6 +31,14 @@ class Player {
         $(this.element).attr("data-row", this.row);
         $(this.element).attr("data-col", this.col);
         $(this.element).attr("data-on-field", this.onField);
+    }
+
+    /**
+     * @description Sets the players blink mode.
+     * @param {string} blink "off", "on", or "slow" for how to blink the player.
+     */
+    setBlink(blink) {
+        $(this.element).attr("data-blink", blink);
     }
 
     /**

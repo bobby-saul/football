@@ -10,7 +10,7 @@
         "d5": new Player($("#d5").get(0)),
         "d6": new Player($("#d6").get(0))
     };
-    var game = new Game(players);
-    game.setUpPlay();
+    var controller = new EventController(players);
+    controller.startGame();
 
 }(jQuery));
