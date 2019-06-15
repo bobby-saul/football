@@ -13,8 +13,13 @@ class GameController {
         this.ballOn = 20;
         this.down = 1;
         this.toGo = 10;
+        this.scoreboard = "default";
         this.inPlay = false;
         this.setUp = false;
+        this.kickoffSetUp = false;
+        this.kickoff = false;
+        this.kicking = false;
+        this.returning = false;
         this.score = {
             "home": 0,
             "visitors": 0
@@ -38,18 +43,31 @@ class GameController {
     }
 
     /**
+     * @description Turns off every player.
+     */
+    clearField() {
+        for (var player in this.players) {
+            this.players[player].turnOff();
+            this.players[player].setBlink("off");
+        }
+    }
+
+    /**
      * @description Starts a new game.
      */
     startGame() {
-        this.players.qb.direction = 1;
+        this.players.qb.direction = -1;
         this.quarter = 1;
         this.time = 15.0.toFixed(1);
-        this.timer;
-        this.ballOn = 20;
+        this.ballOn = 65;
         this.down = 1;
         this.toGo = 10;
         this.inPlay = false;
         this.setUp = false;
+        this.kickoffSetUp = false;
+        this.kickoff = true;
+        this.kicking = false;
+        this.returning = false;
         this.scoreboard = "default";
         this.score = {
             "home": 0,
@@ -57,7 +75,7 @@ class GameController {
         };
         this.isTouchdown = false;
         this.defaultScoreboard();
-        this.setUpPlay();
+        this.setUpKick();
     }
 
     /**
@@ -68,6 +86,22 @@ class GameController {
         $("#down").text("");
         $("#toGo").text("");
         $("#fieldPosition").text(this.time);
+    }
+
+    /**
+     * @description Displays where the ball is on a kick.
+     */
+    showKick() {
+        this.scoreboard = "kick";
+        $("#down").text("");
+        $("#toGo").text("");
+        if (this.ballOn < 50) {
+            $("#fieldPosition").text("1- " + this.ballOn);
+        } else if (this.ballOn > 50) {
+            $("#fieldPosition").text((100 - this.ballOn) + " -1");
+        } else {
+            $("#fieldPosition").text(this.ballOn);
+        }
     }
 
     /**
@@ -89,8 +123,10 @@ class GameController {
             $("#fieldPosition").text(this.ballOn);
         }
         
-        if (!this.setUp && !this.inPlay) {
+        if (!this.setUp && !this.inPlay && !this.kickoff) {
             this.setUpPlay();
+        } else if (!this.setUp && !this.inPlay && this.kickoff && !this.kicking) {
+            this.setUpKick();
         }
     }
 
@@ -111,6 +147,10 @@ class GameController {
         if (this.setUp) {
             this.startPlay();
         }
+        if (this.kickoff) {
+            this.addDefenders();
+            this.kickoff = false;
+        }
         if (this.players.qb.row > 1) {
             var checkPlayer = this.getPlayerAt(this.players.qb.col, this.players.qb.row - 1);
             if (checkPlayer) {
@@ -127,6 +167,10 @@ class GameController {
     moveDown() {
         if (this.setUp) {
             this.startPlay();
+        }
+        if (this.kickoff) {
+            this.addDefenders();
+            this.kickoff = false;
         }
         if (this.players.qb.row < 3) {
             var checkPlayer = this.getPlayerAt(this.players.qb.col, this.players.qb.row + 1);
@@ -145,6 +189,10 @@ class GameController {
         var checkPlayer
         if (this.setUp) {
             this.startPlay();
+        }
+        if (this.kickoff) {
+            this.addDefenders();
+            this.kickoff = false;
         }
         if (this.players.qb.col < 10) {
             checkPlayer = this.getPlayerAt(this.players.qb.col + 1, this.players.qb.row);
@@ -180,6 +228,10 @@ class GameController {
         if (this.setUp) {
             this.startPlay();
         }
+        if (this.kickoff) {
+            this.addDefenders();
+            this.kickoff = false;
+        }
         if (this.players.qb.col > 1) {
             checkPlayer = this.getPlayerAt(this.players.qb.col - 1, this.players.qb.row);
         } else if (this.players.qb.direction === 1) {
@@ -203,6 +255,132 @@ class GameController {
                 this.ballOn = this.ballOn + 1;
                 this.toGo = this.toGo + 1;
             }
+        }
+    }
+
+    /**
+     * @description Shows the animation before the kickoff.
+     */
+    kickAnimation() {
+        this.kickoffSetUp = false;
+        this.kicking = true;
+        var loopIndex = 0;
+        var runningStart = setInterval(function () {
+            loopIndex += 1;
+
+            if (this.players.qb.direction === 1){
+                this.players.d1.moveLeft();
+                this.players.d2.moveLeft();
+                this.players.d3.moveLeft();
+            } else {
+                this.players.d1.moveRight();
+                this.players.d2.moveRight();
+                this.players.d3.moveRight();
+            }
+
+            if (loopIndex === 4) {
+                clearInterval(runningStart);
+                this.kick("kickoff");
+            }
+        }.bind(this), 100);
+    }
+
+    /**
+     * @description Kicks the ball to the other team.
+     * @param {string} kickType The type of kick (kickoff, punt, fieldgoal).
+     */
+    kick(kickType) {
+        var distance;
+        if (kickType === "kickoff") {
+            // random distance between 50 - 80 yards
+            distance = Math.random() * 30 + 50; 
+        } else if (kickType === "punt") {
+            // random distance between 35 - 60 yards
+            distance = Math.random() * 25 + 35;
+        } else {
+            // random distance between 20 - 55 yards
+            distance = Math.random() * 25 + 20;
+        }
+        
+        this.clearField();
+        clearInterval(this.timer);
+        this.timer = setInterval(this.runClock.bind(this), 1000);
+        this.players.qb.turnOn();
+        var loopIndex = 0;
+        var ballInAir = setInterval(function () {
+            this.showKick();
+            loopIndex += 1;
+
+            if (this.players.qb.direction === 1){
+                this.players.qb.moveLeft();
+                this.ballOn += 1;
+            } else {
+                this.players.qb.moveRight();
+                this.ballOn -= 1;
+            }
+
+            if (loopIndex > distance) {
+                clearInterval(ballInAir);
+                clearInterval(this.timer);
+                this.returnKick();
+            }
+        }.bind(this), 100);
+    }
+
+
+    returnKick() {
+        this.defaultScoreboard();
+        this.kicking = false;
+        this.returning = true;
+        this.players.qb.direction = -this.players.qb.direction;
+        if (this.ballOn > 0 && this.ballOn < 98) {
+            this.players.qb.setBlink("off");
+            this.toGo = -99;
+            this.setUp = true;
+        } else {
+            if (this.players.qb.direction === 1) {
+                this.ballOn = 20;
+            } else {
+                this.ballOn = 80;
+            }
+            this.players.qb.setBlink("on");
+            this.toGo = 10;
+            this.setUp = false;
+            this.inPlay = false;
+            this.kickoff = false;
+            this.returning = false;
+        }
+    }
+
+    /**
+     * @description Starts adding defensive players at random times.
+     * @param {int} index The index of the defensive player to add (1-6).
+     */
+    addDefenders(index) {
+        if (!index) {
+            index = 1;
+        }
+        if (this.inPlay){
+            var position = this.getRandomOpen();
+            this.players["d" + index].turnOn();
+            this.players["d" + index].setScreen(position.col, position.row);
+            var time = Math.random() * 1000;
+            if (index < 6) {
+                setTimeout( function() {
+                    this.addDefenders(index + 1);
+                }.bind(this), time);
+            }
+        }
+
+    }
+
+    getRandomOpen() {
+        var col = Math.floor(Math.random() * 10 + 1);
+        var row = Math.floor(Math.random() * 3 + 1);
+        if (!this.getPlayerAt(col, row)) {
+            return {"col": col, "row": row};
+        } else {
+            return this.getRandomOpen();
         }
     }
 
@@ -230,6 +408,14 @@ class GameController {
                 }
                 break;
             case "KICK":
+                if (this.kickoff && this.kickoffSetUp) {
+                    this.kickAnimation();
+                }
+                if (this.setUp && !this.returning) {
+                    this.setUp = false;
+                    this.kickoff = true;
+                    this.kick("punt");
+                }
                 break;
             case "PASS":
                 break;
@@ -250,17 +436,12 @@ class GameController {
     touchdown() {
         if (this.players.qb.direction === -1) {
             this.score.home += 7;
-            this.players.qb.direction = 1;
-            this.ballOn = 20;
-            this.down = 1;
-            this.toGo = 10;
+            this.ballOn = 65;
         } else {
             this.score.visitors += 7;
-            this.players.qb.direction = -1;
-            this.ballOn = 80;
-            this.down = 1;
-            this.toGo = 10;
+            this.ballOn = 35;
         }
+        this.kickoff = true;
         this.isTouchdown = false;
     }
 
@@ -270,17 +451,14 @@ class GameController {
     safety() {
         if (this.players.qb.direction === -1) {
             this.score.visitors += 2;
-            this.players.qb.direction = 1;
-            this.ballOn = 20;
-            this.down = 1;
-            this.toGo = 10;
+            this.ballOn = 80;
         } else {
             this.score.home += 2;
-            this.players.qb.direction = -1;
-            this.ballOn = 80;
-            this.down = 1;
-            this.toGo = 10;
+            this.ballOn = 20;
         }
+        this.down = 1;
+        this.toGo = -99;
+        this.kickoff = true;
     }
 
     /**
@@ -290,6 +468,7 @@ class GameController {
         console.log("start play");
         this.setUp = false;
         this.toGo = this.toGo + 1;
+        clearInterval(this.timer);
         this.timer = setInterval(this.runClock.bind(this), 1000);
         this.inPlay = true;
         if (this.players.qb.direction === 1) {
@@ -306,6 +485,8 @@ class GameController {
         console.log("end play");
         clearInterval(this.timer);
         this.inPlay = false;
+        this.kicking = false;
+        this.returning = false;
 
         if (typeof defender !== "undefined") {
             defender.setBlink("on");
@@ -359,10 +540,45 @@ class GameController {
     }
 
     /**
+     * @description Sets up the kick off.
+     */
+    setUpKick() {
+        this.kickoffSetUp = true;
+        this.clearField();
+        if (this.players.qb.direction === 1){
+            this.players.qb.setScreen(4,2);
+            this.players.qb.setBlink("on");
+            this.players.qb.turnOn();
+            this.players.d1.setScreen(10,1);
+            this.players.d1.turnOn();
+            this.players.d2.setScreen(9,2);
+            this.players.d2.turnOn();
+            this.players.d3.setScreen(10,3);
+            this.players.d3.turnOn();
+        } else {
+            this.players.qb.setScreen(6,2);
+            this.players.qb.setBlink("on");
+            this.players.qb.turnOn();
+            this.players.d1.setScreen(1,1);
+            this.players.d1.turnOn();
+            this.players.d2.setScreen(2,2);
+            this.players.d2.turnOn();
+            this.players.d3.setScreen(1,3);
+            this.players.d3.turnOn();
+        }
+
+        if (this.time < 0.1) {
+            this.quarter = this.quarter + 1;
+            this.time = 15.0.toFixed(1);
+        }
+    }
+
+    /**
      * @description Function to set up the next play.
      */
     setUpPlay() {
         this.setUp = true;
+        this.clearField();
 
         for (var player in this.players) {
             this.players[player].setBlink("off");
