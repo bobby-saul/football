@@ -11,6 +11,7 @@ class GameController {
         this.time = 15.0.toFixed(1);
         this.timer;
         this.ballOn = 20;
+        this.los = 20;
         this.down = 1;
         this.toGo = 10;
         this.scoreboard = "default";
@@ -60,6 +61,7 @@ class GameController {
         this.quarter = 1;
         this.time = 15.0.toFixed(1);
         this.ballOn = 65;
+        this.los = 65;
         this.down = 1;
         this.toGo = 10;
         this.inPlay = false;
@@ -123,10 +125,20 @@ class GameController {
             $("#fieldPosition").text(this.ballOn);
         }
         
-        if (!this.setUp && !this.inPlay && !this.kickoff) {
-            this.setUpPlay();
-        } else if (!this.setUp && !this.inPlay && this.kickoff && !this.kicking) {
-            this.setUpKick();
+        if (!this.setUp && !this.inPlay && !this.kicking) {
+            if (this.time < 0.1) {
+                this.quarter = this.quarter + 1;
+                this.time = 15.0.toFixed(1);
+                if (this.quarter === 3) {
+                    this.players.qb.direction = 1;
+                    this.kickoff = true;
+                }
+            }
+            if (!this.kickoff) {
+                this.setUpPlay();
+            } else {
+                this.setUpKick();
+            }
         }
     }
 
@@ -199,7 +211,6 @@ class GameController {
         } else if (this.players.qb.direction === -1) {
             checkPlayer = this.getPlayerAt(1, this.players.qb.row);
         } else {
-            console.log(this.players.qb.direction);
             return false;
         }
         if (checkPlayer) {
@@ -237,7 +248,6 @@ class GameController {
         } else if (this.players.qb.direction === 1) {
             checkPlayer = this.getPlayerAt(10, this.players.qb.row);
         } else {
-            console.log(this.players.qb.direction);
             return false;
         }
         if (checkPlayer) {
@@ -319,9 +329,31 @@ class GameController {
                 this.ballOn -= 1;
             }
 
+            if ((this.players.qb.direction === 1 && this.ballOn > 100) || (this.players.qb.direction === -1 && this.ballOn < 0)) {
+                clearInterval(ballInAir);
+                clearInterval(this.timer);
+                if (kickType === "fieldgoal") {
+                    this.fieldGoal();
+                } else {
+                    this.returnKick();
+                }
+            }
+
             if (loopIndex > distance) {
                 clearInterval(ballInAir);
                 clearInterval(this.timer);
+                // If the field goal misses but is close its a turn over where the line of scrimage is.
+                if (kickType === "fieldgoal" && (this.ballOn > 90 || this.ballOn < 10)) {
+                    this.ballOn = this.los;
+                    this.down = 1;
+                    this.toGo = 10;
+                    this.setUp = false;
+                    this.inPlay = false;
+                    this.kickoff = false;
+                    this.returning = false;
+                    this.players.qb.direction = -this.players.qb.direction;
+                    return;
+                }
                 this.returnKick();
             }
         }.bind(this), 100);
@@ -344,6 +376,7 @@ class GameController {
                 this.ballOn = 80;
             }
             this.players.qb.setBlink("on");
+            this.down = 1;
             this.toGo = 10;
             this.setUp = false;
             this.inPlay = false;
@@ -408,13 +441,25 @@ class GameController {
                 }
                 break;
             case "KICK":
+                // If kickoff
                 if (this.kickoff && this.kickoffSetUp) {
                     this.kickAnimation();
                 }
-                if (this.setUp && !this.returning) {
+                // If punt
+                else if (this.setUp && !this.returning) {
                     this.setUp = false;
                     this.kickoff = true;
                     this.kick("punt");
+                }
+                // If field goal
+                else if (this.inPlay) {
+                    if (this.players.qb.direction === 1 && this.players.qb.row === 2 && this.ballOn === this.los -3) {
+                        this.kickoff = true;
+                        this.kick("fieldgoal");
+                    } else if (this.players.qb.direction === -1 && this.players.qb.row === 2 && this.ballOn === this.los + 3) {
+                        this.kickoff = true;
+                        this.kick("fieldgoal");
+                    }
                 }
                 break;
             case "PASS":
@@ -443,6 +488,25 @@ class GameController {
         }
         this.kickoff = true;
         this.isTouchdown = false;
+        this.clearField();
+    }
+
+    /**
+     * @description Adds three points to the offense.
+     */
+    fieldGoal() {
+        if (this.players.qb.direction === -1) {
+            this.score.home += 3;
+            this.ballOn = 65;
+        } else {
+            this.score.visitors += 3;
+            this.ballOn = 35;
+        }
+        this.setUp = false;
+        this.inPlay = false;
+        this.kickoff = true;
+        this.returning = false;
+        this.clearField();
     }
 
     /**
@@ -544,6 +608,7 @@ class GameController {
      */
     setUpKick() {
         this.kickoffSetUp = true;
+        this.los = this.ballOn;
         this.clearField();
         if (this.players.qb.direction === 1){
             this.players.qb.setScreen(4,2);
@@ -566,11 +631,6 @@ class GameController {
             this.players.d3.setScreen(1,3);
             this.players.d3.turnOn();
         }
-
-        if (this.time < 0.1) {
-            this.quarter = this.quarter + 1;
-            this.time = 15.0.toFixed(1);
-        }
     }
 
     /**
@@ -579,6 +639,7 @@ class GameController {
     setUpPlay() {
         this.setUp = true;
         this.clearField();
+        this.los = this.ballOn;
 
         for (var player in this.players) {
             this.players[player].setBlink("off");
@@ -616,11 +677,6 @@ class GameController {
             this.players.d5.turnOn();
             this.players.d6.setScreen(1,3);
             this.players.d6.turnOn();
-        }
-
-        if (this.time < 0.1) {
-            this.quarter = this.quarter + 1;
-            this.time = 15.0.toFixed(1);
         }
     }
 }
