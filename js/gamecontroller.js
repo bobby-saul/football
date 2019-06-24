@@ -7,6 +7,9 @@ class GameController {
      */
     constructor(players) {
         this.players = players;
+        this.ONESECOND = 1000;
+        this.moveSpeed = 1000;
+        this.ballSpeed = 100;
         this.quarter = 1;
         this.time = 15.0.toFixed(1);
         this.timer;
@@ -331,7 +334,7 @@ class GameController {
                     this.players.ball.turnOff();
                     this.incompletePass();
                 }
-            }.bind(this), 150);
+            }.bind(this), this.ballSpeed);
         } else {
             this.passing = false;
             if (player.position === "offense"){
@@ -409,7 +412,7 @@ class GameController {
                 clearInterval(runningStart);
                 this.kick("kickoff");
             }
-        }.bind(this), 100);
+        }.bind(this), this.ballSpeed);
     }
 
     /**
@@ -432,7 +435,7 @@ class GameController {
         
         this.clearField();
         clearInterval(this.timer);
-        this.timer = setInterval(this.runClock.bind(this), 1000);
+        this.timer = setInterval(this.runClock.bind(this), this.ONESECOND);
         this.players.qb.turnOn();
         var loopIndex = 0;
         var ballInAir = setInterval(function () {
@@ -474,7 +477,7 @@ class GameController {
                 }
                 this.returnKick();
             }
-        }.bind(this), 100);
+        }.bind(this), this.ballSpeed);
     }
 
     /**
@@ -517,7 +520,7 @@ class GameController {
             var position = this.getRandomOpen();
             this.players["d" + index].turnOn();
             this.players["d" + index].setScreen(position.col, position.row);
-            var time = Math.random() * 1000;
+            var time = Math.random() * this.moveSpeed;
             if (index < 6) {
                 setTimeout( function() {
                     this.addDefenders(index + 1);
@@ -686,7 +689,7 @@ class GameController {
         this.setUp = false;
         this.toGo = this.toGo + 1;
         clearInterval(this.timer);
-        this.timer = setInterval(this.runClock.bind(this), 1000);
+        this.timer = setInterval(this.runClock.bind(this), this.ONESECOND);
         this.inPlay = true;
         if (this.players.qb.direction === 1) {
             this.ballOn = this.ballOn - 1;
