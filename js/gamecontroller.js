@@ -17,6 +17,8 @@ class GameController {
         this.scoreboard = "default";
         this.inPlay = false;
         this.setUp = false;
+        this.canPass = false;
+        this.passing = false;
         this.kickoffSetUp = false;
         this.kickoff = false;
         this.kicking = false;
@@ -36,7 +38,7 @@ class GameController {
      */
     getPlayerAt(col, row) {
         for (var player in this.players) {
-            if (this.players[player].col === col && this.players[player].row === row && this.players[player].onField) {
+            if (this.players[player].col === col && this.players[player].row === row && this.players[player].onField && this.players[player].position !== "ball") {
                 return this.players[player];
             }
         }
@@ -66,6 +68,8 @@ class GameController {
         this.toGo = 10;
         this.inPlay = false;
         this.setUp = false;
+        this.canPass = false;
+        this.passing = false;
         this.kickoffSetUp = false;
         this.kickoff = true;
         this.kicking = false;
@@ -131,6 +135,7 @@ class GameController {
                 this.time = 15.0.toFixed(1);
                 if (this.quarter === 3) {
                     this.players.qb.direction = 1;
+                    this.ballOn = 35;
                     this.kickoff = true;
                 }
             }
@@ -269,6 +274,118 @@ class GameController {
     }
 
     /**
+     * @description Passes the ball.
+     */
+    pass() {
+        if (this.players.qb.direction === 1) {
+            this.players.ball.setScreen(this.players.qb.col - 1, this.players.qb.row);
+        } else {
+            this.players.ball.setScreen(this.players.qb.col + 1, this.players.qb.row);
+        }
+        var player = this.getPlayerAt(this.players.ball.col, this.players.ball.row);
+        if (!player) {
+            this.players.ball.turnOn();
+            clearInterval(this.passing);
+            this.passing = setInterval(function () {
+                if (this.players.qb.direction === 1) {
+                    this.players.ball.moveLeft();
+                } else {
+                    this.players.ball.moveRight();
+                }
+                var player = this.getPlayerAt(this.players.ball.col, this.players.ball.row);
+                // Completion
+                if (player.position === "offense"){
+                    clearInterval(this.passing);
+                    console.log("Completion");
+                    this.players.ball.turnOff();
+                    this.players.receiver.turnOff();
+                    this.caughtPass();
+                    this.players.qb.setScreen(this.players.ball.col, this.players.ball.row);
+                    if (this.ballOn > 99 || this.ballOn < 1) {
+                        this.isTouchdown = true;
+                        this.stopPlay();
+                    }
+                }
+                // Interception
+                if (player.position === "defense"){
+                    if ((this.players.qb.direction === 1 && player.col < 8) || (this.players.qb.direction === -1 && player.col > 3)) {
+                        clearInterval(this.passing);
+                        console.log("Interception pass");
+                        this.players.ball.turnOff();
+                        this.players.qb.direction = -this.players.qb.direction;
+                        this.caughtPass();
+                        if (this.ballOn > 99 ) {
+                            this.ballOn = 80;
+                        } else if (this.ballOn < 1) {
+                            this.ballOn = 20;
+                        }
+                        this.down = 1;
+                        this.toGo = -99;
+                        this.stopPlay(player);
+                    }
+                }
+                // Incomplete pass
+                if (this.players.ball.col > 9 || this.players.ball.col < 2 ){
+                    clearInterval(this.passing);
+                    console.log("Incomplete pass");
+                    this.players.ball.turnOff();
+                    this.incompletePass();
+                }
+            }.bind(this), 150);
+        } else {
+            this.passing = false;
+            if (player.position === "offense"){
+                this.players.ball.turnOff();
+                this.players.receiver.turnOff();
+                this.caughtPass();
+                this.players.qb.setScreen(this.players.ball.col, this.players.ball.row);
+                if (this.ballOn > 99 || this.ballOn < 1) {
+                    this.isTouchdown = true;
+                    this.stopPlay();
+                }
+            }
+            // Interception
+            if (player.position === "defense"){
+                if ((this.players.qb.direction === 1 && player.col < 8) || (this.players.qb.direction === -1 && player.col > 3)) {
+                    this.players.ball.turnOff();
+                    this.players.qb.direction = -this.players.qb.direction;
+                    this.caughtPass();
+                    if (this.ballOn > 99 ) {
+                        this.ballOn = 80;
+                    } else if (this.ballOn < 1) {
+                        this.ballOn = 20;
+                    }
+                    this.down = 1;
+                    this.toGo = -99;
+                    this.stopPlay(player);
+                }
+            }
+        }
+    }
+
+    /**
+     * @description Sets ball back to line of scrimage.
+     */
+    incompletePass() {
+        var qbDistance = this.ballOn - this.los;
+        this.ballOn = this.los;
+        this.toGo = this.toGo - Math.abs(qbDistance);
+        console.log(qbDistance);
+        this.passing = false;
+        this.stopPlay();
+    }
+
+    /**
+     * @description Moves the ball position and to go mark to the point of the catch.
+     */
+    caughtPass() {
+        var qbDistance = this.players.qb.col - this.players.ball.col;
+        this.ballOn = this.ballOn + qbDistance;
+        this.toGo = this.toGo - Math.abs(qbDistance);
+        this.passing = false;
+    }
+
+    /**
      * @description Shows the animation before the kickoff.
      */
     kickAnimation() {
@@ -301,6 +418,7 @@ class GameController {
      */
     kick(kickType) {
         var distance;
+        this.canPass = false;
         if (kickType === "kickoff") {
             // random distance between 50 - 80 yards
             distance = Math.random() * 30 + 50; 
@@ -359,7 +477,9 @@ class GameController {
         }.bind(this), 100);
     }
 
-
+    /**
+     * @description Returns the kick.
+     */
     returnKick() {
         this.defaultScoreboard();
         this.kicking = false;
@@ -407,6 +527,28 @@ class GameController {
 
     }
 
+    /**
+     * @description Adds the receiver to the play.
+     */
+    addReciever() {
+        var row = Math.random();
+        if (this.players.qb.direction === 1) {
+            if (row > 0.5){
+                this.players.receiver.setScreen(6, 1);
+            } else {
+                this.players.receiver.setScreen(6, 3);
+            }
+        } else {
+            if (row > 0.5){
+                this.players.receiver.setScreen(5, 1);
+            } else {
+                this.players.receiver.setScreen(5, 3);
+            }
+        }
+        this.players.receiver.setBlink("slow");
+        this.players.receiver.turnOn();
+    }
+
     getRandomOpen() {
         var col = Math.floor(Math.random() * 10 + 1);
         var row = Math.floor(Math.random() * 3 + 1);
@@ -421,38 +563,46 @@ class GameController {
         console.log(event);
         switch (event) {
             case "UP":
-                if (this.inPlay || this.setUp) {
+                if ((this.inPlay || this.setUp) && !this.passing) {
                     this.moveUp();
                 }
                 break;
             case "DOWN":
-                if (this.inPlay || this.setUp) {
+                if ((this.inPlay || this.setUp) && !this.passing) {
                     this.moveDown();
                 }
                 break;
             case "RIGHT":
-                if (this.inPlay || this.setUp) {
+                if ((this.inPlay || this.setUp) && !this.passing) {
                     this.moveRight();
+                    if (this.canPass && (this.players.qb.direction === 1 && this.ballOn >= this.los) || (this.players.qb.direction === -1 && this.ballOn <= this.los)) {
+                        this.canPass = false;
+                        this.players.receiver.turnOff();
+                    }
                 }
                 break;
             case "LEFT":
-                if (this.inPlay || this.setUp) {
+                if ((this.inPlay || this.setUp) && !this.passing) {
                     this.moveLeft();
+                    if (this.canPass && (this.players.qb.direction === 1 && this.ballOn >= this.los) || (this.players.qb.direction === -1 && this.ballOn <= this.los)) {
+                        this.canPass = false;
+                        this.players.receiver.turnOff();
+                    }
                 }
                 break;
             case "KICK":
                 // If kickoff
-                if (this.kickoff && this.kickoffSetUp) {
+                if (this.kickoff && this.kickoffSetUp && !this.passing) {
                     this.kickAnimation();
                 }
                 // If punt
-                else if (this.setUp && !this.returning) {
+                else if (this.setUp && !this.returning && !this.passing) {
                     this.setUp = false;
                     this.kickoff = true;
                     this.kick("punt");
                 }
                 // If field goal
-                else if (this.inPlay) {
+                else if (this.inPlay && !this.passing) {
                     if (this.players.qb.direction === 1 && this.players.qb.row === 2 && this.ballOn === this.los -3) {
                         this.kickoff = true;
                         this.kick("fieldgoal");
@@ -463,8 +613,11 @@ class GameController {
                 }
                 break;
             case "PASS":
+                if (this.canPass && !this.passing && this.inPlay) {
+                    this.pass();
+                }
                 break;
-            case "STATUS":
+                case "STATUS":
                 this.showStatus();
                 break;
             case "SCORE":
@@ -537,8 +690,14 @@ class GameController {
         this.inPlay = true;
         if (this.players.qb.direction === 1) {
             this.ballOn = this.ballOn - 1;
+            if (this.canPass) {
+                this.addReciever();
+            }
         } else {
             this.ballOn = this.ballOn + 1;
+            if (this.canPass) {
+                this.addReciever();
+            }
         }
     }
 
@@ -551,6 +710,8 @@ class GameController {
         this.inPlay = false;
         this.kicking = false;
         this.returning = false;
+        this.canPass = false;
+        this.passing = false;
 
         if (typeof defender !== "undefined") {
             defender.setBlink("on");
@@ -640,6 +801,7 @@ class GameController {
         this.setUp = true;
         this.clearField();
         this.los = this.ballOn;
+        this.canPass = true;
 
         for (var player in this.players) {
             this.players[player].setBlink("off");

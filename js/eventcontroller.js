@@ -25,6 +25,9 @@ class EventController {
         $(document).on("keyup", this.keyUp.bind(this));
     }
 
+    /**
+     * @description Starts the game.
+     */
     startGame() {
         this.game = new GameController(this.players);
         this.game.startGame();

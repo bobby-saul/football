@@ -4,9 +4,11 @@ class Player {
     /**
      * Creates a Player object.
      * @param {object} element The DOM element of the Player.
+     * @param {object} position "ball", "defense" or "offense".
      */
-    constructor (element) {
+    constructor (element, position) {
         this.element = element;
+        this.position = position;
         this.row = 1;
         this.col = 1;
         this.onField = false;
