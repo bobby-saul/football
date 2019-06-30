@@ -2,8 +2,8 @@
 
     var players = {
         "ball": new Player($("#ball").get(0), "ball"),
-        "qb": new Player($("#qb").get(0), "offense"),
-        "receiver": new Player($("#receiver").get(0), "offense"),
+        "qb": new Player($("#qb").get(0), "qb"),
+        "receiver": new Player($("#receiver").get(0), "receiver"),
         "d1": new Player($("#d1").get(0), "defense"),
         "d2": new Player($("#d2").get(0), "defense"),
         "d3": new Player($("#d3").get(0), "defense"),

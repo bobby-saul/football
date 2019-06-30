@@ -14,6 +14,10 @@ GameController.prototype.defaultScoreboard = function () {
  * @description Displays the current status of the game.
  */
 GameController.prototype.showStatus = function() {
+    if (!this.gameOn) {
+        this.showScore();
+        return;
+    }
     this.scoreboard = "status";
     $("#down").text(this.down);
     if (this.toGo < 1) {

@@ -54,11 +54,11 @@ GameController.prototype.safety = function () {
  * @description Function to starts the play.
  */
 GameController.prototype.startPlay = function () {
-    console.log("start play");
     this.setUp = false;
     this.toGo = this.toGo + 1;
     clearInterval(this.timer);
     this.timer = setInterval(this.runClock.bind(this), this.ONESECOND);
+    this.moveRandomDefense();
     this.inPlay = true;
     if (this.players.qb.direction === 1) {
         this.ballOn = this.ballOn - 1;
@@ -77,7 +77,6 @@ GameController.prototype.startPlay = function () {
  * @description Function to stop the play.
  */
 GameController.prototype.stopPlay = function (defender) {
-    console.log("end play");
     clearInterval(this.timer);
     this.inPlay = false;
     this.kicking = false;
@@ -113,12 +112,16 @@ GameController.prototype.stopPlay = function (defender) {
         }
         this.down = 1
     } else if (this.down > 3){
-        console.log("turnover");
         this.players.qb.changeDirection();
         this.toGo = 10;
         this.down = 1;
     } else {
         this.down = this.down + 1;
+    }
+
+    if (this.time < 0.1 && this.quarter > 3) {
+        this.gameOn = false;
+        this.showScore();
     }
 }
 
@@ -131,7 +134,6 @@ GameController.prototype.runClock = function () {
         $("#fieldPosition").text(this.time);
     }
     if (this.time < 0.1) {
-        console.log("Time is out!");
         clearInterval(this.timer);
     }
 }
@@ -153,8 +155,8 @@ GameController.prototype.setUpPlay = function () {
         this.players.qb.setScreen(3,2);
         this.players.qb.turnOn();
 
-        // this.players.d1.setScreen(4,1);
-        // this.players.d1.turnOn();
+        this.players.d1.setScreen(4,1);
+        this.players.d1.turnOn();
         this.players.d2.setScreen(4,2);
         this.players.d2.turnOn();
         this.players.d3.setScreen(4,3);
@@ -169,8 +171,8 @@ GameController.prototype.setUpPlay = function () {
         this.players.qb.setScreen(8,2);
         this.players.qb.turnOn();
 
-        // this.players.d1.setScreen(7,1);
-        // this.players.d1.turnOn();
+        this.players.d1.setScreen(7,1);
+        this.players.d1.turnOn();
         this.players.d2.setScreen(7,2);
         this.players.d2.turnOn();
         this.players.d3.setScreen(7,3);

@@ -10,7 +10,7 @@ GameController.prototype.pass = function() {
         this.players.ball.setScreen(this.players.qb.col + 1, this.players.qb.row);
     }
     var player = this.getPlayerAt(this.players.ball.col, this.players.ball.row);
-    if (!player) {
+    if (!player || (this.players.qb.col > 8 || this.players.qb.col < 3)) {
         this.players.ball.turnOn();
         clearInterval(this.passing);
         this.passing = setInterval(function () {
@@ -21,9 +21,8 @@ GameController.prototype.pass = function() {
             }
             var player = this.getPlayerAt(this.players.ball.col, this.players.ball.row);
             // Completion
-            if (player.position === "offense"){
+            if (player.position === "receiver"){
                 clearInterval(this.passing);
-                console.log("Completion");
                 this.players.ball.turnOff();
                 this.players.receiver.turnOff();
                 this.caughtPass();
@@ -37,7 +36,6 @@ GameController.prototype.pass = function() {
             if (player.position === "defense"){
                 if ((this.players.qb.direction === 1 && player.col < 8) || (this.players.qb.direction === -1 && player.col > 3)) {
                     clearInterval(this.passing);
-                    console.log("Interception pass");
                     this.players.ball.turnOff();
                     this.players.qb.direction = -this.players.qb.direction;
                     this.caughtPass();
@@ -54,14 +52,13 @@ GameController.prototype.pass = function() {
             // Incomplete pass
             if (this.players.ball.col > 9 || this.players.ball.col < 2 ){
                 clearInterval(this.passing);
-                console.log("Incomplete pass");
                 this.players.ball.turnOff();
                 this.incompletePass();
             }
         }.bind(this), this.ballSpeed);
     } else {
         this.passing = false;
-        if (player.position === "offense"){
+        if (player.position === "receiver"){
             this.players.ball.turnOff();
             this.players.receiver.turnOff();
             this.caughtPass();
@@ -97,7 +94,6 @@ GameController.prototype.incompletePass = function () {
     var qbDistance = this.ballOn - this.los;
     this.ballOn = this.los;
     this.toGo = this.toGo - Math.abs(qbDistance);
-    console.log(qbDistance);
     this.passing = false;
     this.stopPlay();
 }
@@ -132,6 +128,35 @@ GameController.prototype.addReciever = function () {
     }
     this.players.receiver.setBlink("slow");
     this.players.receiver.turnOn();
+    this.movReceiver();
+}
+
+GameController.prototype.movReceiver = function () {
+    setTimeout(function () {
+        if (this.inPlay && this.players.receiver.onField) {
+            var direction = Math.random();
+            if (direction > 0.66666) {
+                if (this.players.qb.direction === 1) {
+                    if (!this.getPlayerAt(this.players.receiver.col - 1, this.players.receiver.row)) {
+                        this.players.receiver.moveLeft();
+                    }
+                } else {
+                    if (!this.getPlayerAt(this.players.receiver.col + 1, this.players.receiver.row)) {
+                        this.players.receiver.moveRight();
+                    }
+                }
+            } else if (direction > 0.8333) {
+                if (!this.getPlayerAt(this.players.receiver.col, this.players.receiver.row - 1)) {
+                    this.players.receiver.moveUp();
+                }
+            } else {
+                if (!this.getPlayerAt(this.players.receiver.col, this.players.receiver.row + 1)) {
+                    this.players.receiver.moveDown();
+                }
+            }
+            this.movReceiver();
+        }
+    }.bind(this), this.moveSpeed * Math.random() + 0.25);
 }
 
 GameController.prototype.getRandomOpen = function () {
