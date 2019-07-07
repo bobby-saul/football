@@ -22,6 +22,8 @@ class EventController {
         this.game;
 
         $(".setting-form-wrapper input").on("keydown", this.changeKey.bind(this));
+        $("input[name='field-speed']").on("change", this.changeSpeed.bind(this));
+        $("input[name='field-difficulty']").on("change", this.changeMode.bind(this));
         $("#new-game-button").on("click", this.startGame.bind(this));
         $("#resume-game-button").on("click", this.resumeGame.bind(this));
 
@@ -46,6 +48,32 @@ class EventController {
     }
 
     /**
+     * @description Changes the speed of the game.
+     */
+    changeSpeed() {
+        if (typeof this.game !== "undefined") {
+            if ($("input[name='field-speed']:checked").val() === "fast") {
+                this.game.moveSpeed = 800;
+            } else {
+                this.game.moveSpeed = 1400;
+            }
+        }
+    }
+
+    /**
+     * @description Changes the difficulty mode of the game.
+     */
+    changeMode() {
+        if (typeof this.game !== "undefined") {
+            if ($("input[name='field-difficulty']:checked").val() === "hard") {
+                this.game.hardMode = true;
+            } else {
+                this.game.hardMode = false;
+            }
+        }
+    }
+
+    /**
      * @description Starts the game.
      */
     startGame() {
@@ -55,7 +83,7 @@ class EventController {
         $(".open-settings").removeClass("open-settings");
         this.settingsOpen = false;
         this.game = new GameController(this.players);
-        this.game.startGame();
+        this.game.startGame($("input[name='field-speed']:checked").val(), $("input[name='field-difficulty']:checked").val());
     }
 
     /**

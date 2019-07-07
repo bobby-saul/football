@@ -16,6 +16,21 @@ GameController.prototype.getPlayerAt = function (col, row) {
 }
 
 /**
+ * @description Returns the player index at the position.
+ * @param {int} col The column to get the player at.
+ * @param {int} row The row to get the player at.
+ * @returns {String} Returns the player index at the position or false if no player.
+ */
+GameController.prototype.getPlayerIndexAt = function (col, row) {
+    for (var player in this.players) {
+        if (this.players[player].col === col && this.players[player].row === row && this.players[player].onField && this.players[player].position !== "ball") {
+            return player;
+        }
+    }
+    return false;
+}
+
+/**
  * @description Turns off every player.
  */
 GameController.prototype.clearField = function () {

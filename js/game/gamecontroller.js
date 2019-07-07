@@ -7,9 +7,10 @@ class GameController {
      */
     constructor(players) {
         this.gameOn = false;
+        this.hardMode = false;
         this.players = players;
         this.ONESECOND = 1000;
-        this.moveSpeed = 1000;
+        this.moveSpeed = 1400;
         this.ballSpeed = 100;
         this.quarter = 1;
         this.time = 15.0.toFixed(1);
@@ -37,10 +38,14 @@ class GameController {
 
     /**
      * @description Starts a new game.
+     * @param {String} [speed] The speed to play ("slow" or "fast"). Defaults to "slow".
+     * @param {String} [mode] The mode of difficulty ("easy" or "hard"). Defaults to "easy".
      */
-    startGame() {
+    startGame(speed, mode) {
         this.gameOn = true;
+        this.hardMode = false;
         this.players.qb.direction = -1;
+        this.moveSpeed = 1400;
         this.quarter = 1;
         this.time = 15.0.toFixed(1);
         this.ballOn = 65;
@@ -62,6 +67,15 @@ class GameController {
             "visitors": 0
         };
         this.isTouchdown = false;
+
+        if (speed && speed === "fast") {
+            this.moveSpeed = 800;
+        }
+
+        if (mode && mode === "hard") {
+            this.hardMode = true;
+        }
+
         this.defaultScoreboard();
         this.setUpKick();
     }

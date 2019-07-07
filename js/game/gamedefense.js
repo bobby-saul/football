@@ -42,6 +42,8 @@ GameController.prototype.moveDefense = function (player) {
                         this.players[player].moveLeft();
                     } else if (newSpotPlayer.position === "qb" && !this.passing) {
                         this.stopPlay(this.players[player]);
+                    } else if (newSpotPlayer.position === "defense" && this.hardMode) {
+                        this.moveDefense(this.getPlayerIndexAt(this.players[player].col - 1, this.players[player].row));
                     }
                 } else { // Move right
                     newSpotPlayer = this.getPlayerAt(this.players[player].col + 1, this.players[player].row);
@@ -49,6 +51,8 @@ GameController.prototype.moveDefense = function (player) {
                         this.players[player].moveRight();
                     } else if (newSpotPlayer.position === "qb" && !this.passing) {
                         this.stopPlay(this.players[player]);
+                    } else if (newSpotPlayer.position === "defense" && this.hardMode) {
+                        this.moveDefense(this.getPlayerIndexAt(this.players[player].col + 1, this.players[player].row));
                     }
                 }
             } else { // Move vertical
@@ -59,6 +63,8 @@ GameController.prototype.moveDefense = function (player) {
                         this.players[player].moveUp();
                     } else if (newSpotPlayer.position === "qb" && !this.passing) {
                         this.stopPlay(this.players[player]);
+                    } else if (newSpotPlayer.position === "defense" && this.hardMode) {
+                        this.moveDefense(this.getPlayerIndexAt(this.players[player].col, this.players[player].row - 1));
                     }
                 } else { // Move down
                     newSpotPlayer = this.getPlayerAt(this.players[player].col, this.players[player].row + 1);
@@ -66,6 +72,8 @@ GameController.prototype.moveDefense = function (player) {
                         this.players[player].moveDown();
                     } else if (newSpotPlayer.position === "qb" && !this.passing) {
                         this.stopPlay(this.players[player]);
+                    } else if (newSpotPlayer.position === "defense" && this.hardMode) {
+                        this.moveDefense(this.getPlayerIndexAt(this.players[player].col, this.players[player].row + 1));
                     }
                 }
             }
@@ -77,6 +85,8 @@ GameController.prototype.moveDefense = function (player) {
                     this.players[player].moveLeft();
                 } else if (newSpotPlayer.position === "qb" && !this.passing) {
                     this.stopPlay(this.players[player]);
+                } else if (newSpotPlayer.position === "defense" && this.hardMode) {
+                    this.moveDefense(this.getPlayerIndexAt(this.players[player].col - 1, this.players[player].row));
                 }
             } else { // Move right
                 newSpotPlayer = this.getPlayerAt(this.players[player].col + 1, this.players[player].row);
@@ -84,6 +94,8 @@ GameController.prototype.moveDefense = function (player) {
                     this.players[player].moveRight();
                 } else if (newSpotPlayer.position === "qb" && !this.passing) {
                     this.stopPlay(this.players[player]);
+                } else if (newSpotPlayer.position === "defense" && this.hardMode) {
+                    this.moveDefense(this.getPlayerIndexAt(this.players[player].col + 1, this.players[player].row));
                 }
             }
         } else { // Move vertical
@@ -94,6 +106,8 @@ GameController.prototype.moveDefense = function (player) {
                     this.players[player].moveUp();
                 } else if (newSpotPlayer.position === "qb" && !this.passing) {
                     this.stopPlay(this.players[player]);
+                } else if (newSpotPlayer.position === "defense" && this.hardMode) {
+                    this.moveDefense(this.getPlayerIndexAt(this.players[player].col, this.players[player].row - 1));
                 }
             } else { // Move down
                 newSpotPlayer = this.getPlayerAt(this.players[player].col, this.players[player].row + 1);
@@ -101,6 +115,8 @@ GameController.prototype.moveDefense = function (player) {
                     this.players[player].moveDown();
                 } else if (newSpotPlayer.position === "qb" && !this.passing) {
                     this.stopPlay(this.players[player]);
+                } else if (newSpotPlayer.position === "defense" && this.hardMode) {
+                    this.moveDefense(this.getPlayerIndexAt(this.players[player].col, this.players[player].row + 1));
                 }
             }
         }
