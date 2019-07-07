@@ -7,17 +7,23 @@ class EventController {
         this.players = players;
         this.qb = players.qb;
         this.keys = {
-            "score": "A",
-            "status": "S",
-            "kick": "D",
-            "pass": " ",
-            "up": "ARROWUP",
-            "down": "ARROWDOWN",
-            "left": "ARROWLEFT",
-            "right": "ARROWRIGHT",
+            "score": 65,
+            "status": 83,
+            "kick": 68,
+            "pass": 32,
+            "up": 38,
+            "down": 40,
+            "left": 37,
+            "right": 39,
+            "settings": 27
         };
+        this.settingsOpen = true;
         this.keydown = false;
         this.game;
+
+        $(".setting-form-wrapper input").on("keydown", this.changeKey.bind(this));
+        $("#new-game-button").on("click", this.startGame.bind(this));
+        $("#resume-game-button").on("click", this.resumeGame.bind(this));
 
         $(document).on("keydown", this.emitEvent.bind(this));
         $("button").on("mousedown", this.emitEvent.bind(this));
@@ -26,11 +32,46 @@ class EventController {
     }
 
     /**
+     * @description Changes the key code for the event.
+     * @param {Event} e The event of the input change.
+     */
+    changeKey(e) {
+        if (e.keyCode === 9 || e.keyCode === 16) {
+            return true;
+        }
+        var key = $(e.target).attr("data-key");
+        this.keys[key] = e.keyCode;
+        $(e.target).val(e.key.replace(" ", "SPACE").toUpperCase());
+        return false;
+    }
+
+    /**
      * @description Starts the game.
      */
     startGame() {
+        if (typeof this.game !== "undefined") {
+            this.game.clearGame();
+        }
+        $(".open-settings").removeClass("open-settings");
+        this.settingsOpen = false;
         this.game = new GameController(this.players);
         this.game.startGame();
+    }
+
+    /**
+     * @description Resumes the game.
+     */
+    resumeGame() {
+        $(".open-settings").removeClass("open-settings");
+        this.settingsOpen = false;
+    }
+
+    /**
+     * @description Opens the setting menu.
+     */
+    openSettings() {
+        this.settingsOpen = true;
+        $("body").addClass("open-settings");
     }
 
     /**
@@ -39,14 +80,17 @@ class EventController {
      */
     emitEvent(e) {
         var event;
-        if (this.keydown) {
+        if (this.keydown || this.settingsOpen) {
             return;
         }
         this.keydown = true;
-        if (typeof e.key === "undefined") {
+        if (typeof e.keyCode === "undefined") {
             event = $(e.currentTarget).attr("data-button-type");
+            if (event === "SETTINGS") {
+                this.openSettings();
+            }
         } else {
-            switch (e.key.toUpperCase()) {
+            switch (e.keyCode) {
                 case this.keys.up:
                 case "UP":
                     event = "UP";
@@ -79,6 +123,11 @@ class EventController {
                 case "SCORE":
                     event = "SCORE";
                     break;
+                case this.keys.settings:
+                case "SETTINGS":
+                    this.openSettings();
+                    event = "SETTINGS";
+                    break;
                 default:
                     event = "UNDEFINED";
                     break;
@@ -94,6 +143,8 @@ class EventController {
      */
     keyUp() {
         this.keydown = false;
-        this.game.defaultScoreboard();
+        if (typeof this.game !== "undefined") {
+            this.game.defaultScoreboard();
+        }
     }
 }

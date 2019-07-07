@@ -12,6 +12,6 @@
         "d6": new Player($("#d6").get(0), "defense")
     };
     var controller = new EventController(players);
-    controller.startGame();
+    // controller.startGame();
 
 }(jQuery));

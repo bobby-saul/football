@@ -54,6 +54,7 @@ class GameController {
         this.kickoffSetUp = false;
         this.kickoff = true;
         this.kicking = false;
+        this.ballInAir;
         this.returning = false;
         this.scoreboard = "default";
         this.score = {
@@ -63,6 +64,17 @@ class GameController {
         this.isTouchdown = false;
         this.defaultScoreboard();
         this.setUpKick();
+    }
+
+    /**
+     * @description Clears the game from all variables.
+     */
+    clearGame() {
+        clearInterval(this.timer);
+        clearInterval(this.ballInAir);
+        clearInterval(this.runningStart);
+        clearInterval(this.passing);
+        this.clearField();
     }
 
     triggerEvent(event) {

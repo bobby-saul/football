@@ -66,7 +66,7 @@ GameController.prototype.kick = function (kickType) {
     this.timer = setInterval(this.runClock.bind(this), this.ONESECOND);
     this.players.qb.turnOn();
     var loopIndex = 0;
-    var ballInAir = setInterval(function () {
+    this.ballInAir = setInterval(function () {
         this.showKick();
         loopIndex += 1;
 
@@ -79,7 +79,7 @@ GameController.prototype.kick = function (kickType) {
         }
 
         if ((this.players.qb.direction === 1 && this.ballOn > 100) || (this.players.qb.direction === -1 && this.ballOn < 0)) {
-            clearInterval(ballInAir);
+            clearInterval(this.ballInAir);
             clearInterval(this.timer);
             if (kickType === "fieldgoal") {
                 this.fieldGoal();
@@ -89,7 +89,7 @@ GameController.prototype.kick = function (kickType) {
         }
 
         if (loopIndex > distance) {
-            clearInterval(ballInAir);
+            clearInterval(this.ballInAir);
             clearInterval(this.timer);
             // If the field goal misses but is close its a turn over where the line of scrimage is.
             if (kickType === "fieldgoal" && (this.ballOn > 90 || this.ballOn < 10)) {

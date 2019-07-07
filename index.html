@@ -5,7 +5,7 @@
         <link rel="stylesheet" href="css/styles.css">
         <meta name="viewport" content="width=device-width">
     </head>
-    <body>
+    <body class="open-settings">
         <h1>Football</h1>
 
         <div class="main">
@@ -151,6 +151,84 @@
                 </div>
             </div>
         </div>
+
+        <div class="setting-form-overlay">
+            <div class="setting-form-wrapper">
+                <strong>Controls</strong>
+                <div class="setting-fields">
+                    <div class="keys-fields">
+                        <div class="field-wrapper">
+                            <label for="input-score">Score:</label>
+                            <input id="input-score" type="textfield" data-key="score" value="A">
+                        </div>
+                        <div class="field-wrapper">
+                            <label for="input-status">Status:</label>
+                            <input id="input-status" type="textfield" data-key="status" value="S">
+                        </div>
+                        <div class="field-wrapper">
+                            <label for="input-kick">Kick:</label>
+                            <input id="input-kick" type="textfield"  data-key="kick" value="D">
+                        </div>
+                        <div class="field-wrapper">
+                            <label for="input-pass">Pass:</label>
+                            <input id="input-pass" type="textfield" data-key="pass" value="SPACE">
+                        </div>
+                        <div class="field-wrapper">
+                            <label for="input-settings">Settings:</label>
+                            <input id="input-settings" type="textfield" data-key="settings" value="ESCAPE">
+                        </div>
+                        <div class="field-wrapper">
+                            <label for="input-up">Up:</label>
+                            <input id="input-up" type="textfield" data-key="up" value="ARROWUP">
+                        </div>
+                        <div class="field-wrapper">
+                            <label for="input-down">Down:</label>
+                            <input id="input-down" type="textfield" data-key="down" value="ARROWDOWN">
+                        </div>
+                        <div class="field-wrapper">
+                            <label for="input-left">Left:</label>
+                            <input id="input-left" type="textfield" data-key="left" value="ARROWLEFT">
+                        </div>
+                        <div class="field-wrapper">
+                            <label for="input-right">Right:</label>
+                            <input id="input-right" type="textfield" data-key="right" value="ARROWRIGHT">
+                        </div>
+                    </div>
+                    <div class="setting-radios">
+                        <div class="difficulty-fields">
+                            <div class="field-wrapper">
+                                <strong>Difficulty:</strong>
+                                <div class="radio-wrapper">
+                                    <input id="input-easy" name="field-difficulty" type="radio" value="easy" checked>
+                                    <label for="input-easy">Easy</label>
+                                </div>
+                                <div class="radio-wrapper">
+                                    <input id="input-hard" name="field-difficulty" type="radio" value="hard">
+                                    <label for="input-hard">Hard</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="field-wrapper">
+                            <strong>Speed:</strong>
+                            <div class="radio-wrapper">
+                                <input id="input-slow" name="field-speed" type="radio" value="slow" checked>
+                                <label for="input-slow">Slow</label>
+                            </div>
+                            <div class="radio-wrapper">
+                                <input id="input-fast" name="field-speed" type="radio" value="fast">
+                                <label for="input-fast">Fast</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-buttons">
+                    <button id="new-game-button" class="settings-button">Start New Game</button>
+                    <button id="resume-game-button" class="settings-button">Resume Game</button>
+                </div>
+            </div>
+        </div>
+
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <script src="js/player.js"></script>
         <script src="js/game/gamecontroller.js"></script>

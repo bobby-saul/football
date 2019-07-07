@@ -26,6 +26,9 @@ body {
     font-family: "Raleway";
     text-transform: uppercase;
 }
+body.open-settings {
+    overflow: hidden;
+}
 
 h1 {
     margin: 1rem 0px;
@@ -223,6 +226,85 @@ button.settings {
     vertical-align: middle;
 }
 
+/* Settings Form */
+.setting-form-overlay {
+    display: none;
+}
+.open-settings .setting-form-overlay {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 1rem;
+    z-index: 5;
+}
+.setting-form-wrapper {
+    background: #ffffff;
+    padding: 1rem;
+    border-radius: 5px;
+    box-sizing: border-box;
+    overflow-y: auto;
+    max-height: 100%;
+}
+.keys-fields {
+    padding-right: 1rem;
+    width: 66%;
+}
+.setting-radios {
+    width: 33%;
+}
+.setting-fields {
+    display: flex;
+}
+.settings-buttons {
+    text-align: center;
+}
+.field-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 0.5em;
+}
+.field-wrapper strong {
+    width: 100%;
+}
+.field-wrapper label {
+    margin-right: 0.5rem;
+}
+.field-wrapper input {
+    flex-grow: 1;
+}
+.radio-wrapper input {
+    opacity: 0;
+    position: absolute;
+}
+.radio-wrapper label::after {
+    display: inline-block;
+    vertical-align: bottom;
+    content: '';
+    margin-left: 0.5rem;
+    border: 1px solid #000000;
+    border-radius: 50%;
+    width: 1rem;
+    height: 1rem;
+}
+.radio-wrapper input:focus + label::after {
+    outline: auto;
+}
+.radio-wrapper input:checked + label::after {
+    background-color: #35807c;
+}
+.settings-button {
+    width: auto;
+    color: #f0fe9d;
+    background-color: #35807c;
+}
+
+/* Animations */
 @-webkit-keyframes blinking-player {
     0%   { background-color: rgba(241, 99, 89, 1.0); }
     49% { background-color: rgba(241, 99, 89, 1.0); }
