@@ -38,6 +38,7 @@ GameController.prototype.kickAnimation = function () {
 
         if (loopIndex === 4) {
             clearInterval(runningStart);
+            this.soundController.play("charge");
             this.kick("kickoff");
         }
     }.bind(this), this.ballSpeed);
@@ -52,7 +53,7 @@ GameController.prototype.kick = function (kickType) {
     this.canPass = false;
     if (kickType === "kickoff") {
         // random distance between 50 - 80 yards
-        distance = Math.random() * 30 + 50; 
+        distance = Math.random() * 30 + 50;
     } else if (kickType === "punt") {
         // random distance between 35 - 60 yards
         distance = Math.random() * 25 + 35;
@@ -78,7 +79,8 @@ GameController.prototype.kick = function (kickType) {
             this.ballOn -= 1;
         }
 
-        if ((this.players.qb.direction === 1 && this.ballOn > 100) || (this.players.qb.direction === -1 && this.ballOn < 0)) {
+        // Kicked to end zone.
+        if ((this.players.qb.direction === 1 && this.ballOn > 99) || (this.players.qb.direction === -1 && this.ballOn < 1)) {
             clearInterval(this.ballInAir);
             clearInterval(this.timer);
             if (kickType === "fieldgoal") {
@@ -86,9 +88,7 @@ GameController.prototype.kick = function (kickType) {
             } else {
                 this.returnKick();
             }
-        }
-
-        if (loopIndex > distance) {
+        } else if (loopIndex > distance) {
             clearInterval(this.ballInAir);
             clearInterval(this.timer);
             // If the field goal misses but is close its a turn over where the line of scrimage is.
@@ -96,6 +96,7 @@ GameController.prototype.kick = function (kickType) {
                 this.ballOn = this.los;
                 this.down = 1;
                 this.toGo = 10;
+                this.soundController.play("two_whistles");
                 this.setUp = false;
                 this.inPlay = false;
                 this.kickoff = false;
@@ -113,14 +114,16 @@ GameController.prototype.kick = function (kickType) {
  */
 GameController.prototype.returnKick = function () {
     this.defaultScoreboard();
+    this.soundController.play("one_tone");
     this.kicking = false;
     this.returning = true;
     this.players.qb.direction = -this.players.qb.direction;
-    if (this.ballOn > 0 && this.ballOn < 98) {
+    // Return the ball if not in end zone
+    if (this.ballOn > 0 && this.ballOn < 100) {
         this.players.qb.setBlink("off");
         this.toGo = -99;
         this.setUp = true;
-    } else {
+    } else { // else touchback.
         if (this.players.qb.direction === 1) {
             this.ballOn = 20;
         } else {

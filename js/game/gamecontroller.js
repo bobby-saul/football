@@ -34,14 +34,17 @@ class GameController {
             "visitors": 0
         };
         this.isTouchdown = false;
+        this.soundController;
     }
 
     /**
      * @description Starts a new game.
+     * @param {boolean} sound Whether to play sound or not.
+     * @param {boolean} vibrate Whether to vibrate or not.
      * @param {String} [speed] The speed to play ("slow" or "fast"). Defaults to "slow".
      * @param {String} [mode] The mode of difficulty ("easy" or "hard"). Defaults to "easy".
      */
-    startGame(speed, mode) {
+    startGame(sound, vibrate, speed, mode) {
         this.gameOn = true;
         this.hardMode = false;
         this.players.qb.direction = -1;
@@ -75,6 +78,8 @@ class GameController {
         if (mode && mode === "hard") {
             this.hardMode = true;
         }
+
+        this.soundController = new SoundController(sound, vibrate);
 
         this.defaultScoreboard();
         this.setUpKick();

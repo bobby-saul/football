@@ -11,6 +11,7 @@ GameController.prototype.touchdown = function () {
         this.score.visitors += 7;
         this.ballOn = 35;
     }
+    this.soundController.play("crowd");
     this.kickoff = true;
     this.isTouchdown = false;
     this.clearField();
@@ -27,6 +28,7 @@ GameController.prototype.fieldGoal = function () {
         this.score.visitors += 3;
         this.ballOn = 35;
     }
+    this.soundController.play("crowd");
     this.setUp = false;
     this.inPlay = false;
     this.kickoff = true;
@@ -45,6 +47,7 @@ GameController.prototype.safety = function () {
         this.score.home += 2;
         this.ballOn = 20;
     }
+    this.soundController.play("two_tones");
     this.down = 1;
     this.toGo = -99;
     this.kickoff = true;
@@ -111,7 +114,8 @@ GameController.prototype.stopPlay = function (defender) {
             this.toGo = 10;
         }
         this.down = 1
-    } else if (this.down > 3){
+    } else if (this.down > 3){ // Turnover on downs.
+        this.soundController.play("two_whistles");
         this.players.qb.changeDirection();
         this.toGo = 10;
         this.down = 1;
@@ -134,6 +138,7 @@ GameController.prototype.runClock = function () {
         $("#fieldPosition").text(this.time);
     }
     if (this.time < 0.1) {
+        this.soundController.play("buzzer");
         clearInterval(this.timer);
     }
 }

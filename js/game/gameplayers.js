@@ -54,6 +54,7 @@ GameController.prototype.moveUp = function () {
     if (this.players.qb.row > 1) {
         var checkPlayer = this.getPlayerAt(this.players.qb.col, this.players.qb.row - 1);
         if (checkPlayer) {
+            this.soundController.play("one_whistle");
             this.stopPlay(checkPlayer);
         } else {
             this.players.qb.moveUp();
@@ -75,6 +76,7 @@ GameController.prototype.moveDown = function () {
     if (this.players.qb.row < 3) {
         var checkPlayer = this.getPlayerAt(this.players.qb.col, this.players.qb.row + 1);
         if (checkPlayer) {
+            this.soundController.play("one_whistle");
             this.stopPlay(checkPlayer);
         } else {
             this.players.qb.moveDown();
@@ -86,7 +88,7 @@ GameController.prototype.moveDown = function () {
  * @description Moves the QB right.
  */
 GameController.prototype.moveRight = function () {
-    var checkPlayer
+    var checkPlayer;
     if (this.setUp) {
         this.startPlay();
     }
@@ -102,6 +104,7 @@ GameController.prototype.moveRight = function () {
         return false;
     }
     if (checkPlayer) {
+        this.soundController.play("one_whistle");
         this.stopPlay(checkPlayer);
     } else {
         this.players.qb.moveRight();
@@ -114,6 +117,8 @@ GameController.prototype.moveRight = function () {
             if (this.ballOn < 1) {
                 this.isTouchdown = true;
                 this.stopPlay();
+            } else if (this.toGo === 0) {
+                this.soundController.play("short_beep");
             }
         }
     }
@@ -139,6 +144,7 @@ GameController.prototype.moveLeft = function () {
         return false;
     }
     if (checkPlayer) {
+        this.soundController.play("one_whistle");
         this.stopPlay(checkPlayer);
     } else {
         this.players.qb.moveLeft();
@@ -148,6 +154,8 @@ GameController.prototype.moveLeft = function () {
             if (this.ballOn > 99) {
                 this.isTouchdown = true;
                 this.stopPlay();
+            } else if (this.toGo === 0) {
+                this.soundController.play("short_beep");
             }
         } else {
             this.ballOn = this.ballOn + 1;

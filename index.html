@@ -196,6 +196,14 @@
                     </div>
                     <div class="setting-radios">
                         <div class="field-wrapper">
+                            <input id="sound-field" name="sound-field" type="checkbox" checked>
+                            <label for="sound-field">Sound:</label>
+                        </div>
+                        <div class="field-wrapper">
+                            <input id="vibrate-field" name="vibrate-field" type="checkbox" checked>
+                            <label for="vibrate-field">Vibrate:</label>
+                        </div>
+                        <div class="field-wrapper">
                             <strong>Difficulty:</strong>
                             <div class="radio-wrapper">
                                 <input id="input-easy" name="field-difficulty" type="radio" value="easy" checked>
@@ -229,6 +237,7 @@
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <script src="js/player.js"></script>
+        <script src="js/soundcontroller.js"></script>
         <script src="js/game/gamecontroller.js"></script>
         <script src="js/game/gamescore.js"></script>
         <script src="js/game/gameplay.js"></script>

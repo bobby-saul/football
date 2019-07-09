@@ -44,6 +44,7 @@ GameController.prototype.pass = function() {
                     } else if (this.ballOn < 1) {
                         this.ballOn = 20;
                     }
+                    this.soundController.play("two_whistles");
                     this.down = 1;
                     this.toGo = -99;
                     this.stopPlay(player);
@@ -79,6 +80,7 @@ GameController.prototype.pass = function() {
                 } else if (this.ballOn < 1) {
                     this.ballOn = 20;
                 }
+                this.soundController.play("two_whistles");
                 this.down = 1;
                 this.toGo = -99;
                 this.stopPlay(player);
@@ -95,6 +97,7 @@ GameController.prototype.incompletePass = function () {
     this.ballOn = this.los;
     this.toGo = this.toGo - Math.abs(qbDistance);
     this.passing = false;
+    this.soundController.play("one_whistle");
     this.stopPlay();
 }
 
@@ -102,10 +105,14 @@ GameController.prototype.incompletePass = function () {
  * @description Moves the ball position and to go mark to the point of the catch.
  */
 GameController.prototype.caughtPass = function () {
+    var oldToGo = this.toGo;
     var qbDistance = this.players.qb.col - this.players.ball.col;
     this.ballOn = this.ballOn + qbDistance;
     this.toGo = this.toGo - Math.abs(qbDistance);
     this.passing = false;
+    if (oldToGo > 0 && this.toGo < 1) {
+        this.soundController.play("short_beep");
+    }
 }
 
 /**
@@ -137,11 +144,11 @@ GameController.prototype.movReceiver = function () {
             var direction = Math.random();
             if (direction > 0.66666) {
                 if (this.players.qb.direction === 1) {
-                    if (!this.getPlayerAt(this.players.receiver.col - 1, this.players.receiver.row)) {
+                    if (this.players.receiver.col > 1 && !this.getPlayerAt(this.players.receiver.col - 1, this.players.receiver.row)) {
                         this.players.receiver.moveLeft();
                     }
                 } else {
-                    if (!this.getPlayerAt(this.players.receiver.col + 1, this.players.receiver.row)) {
+                    if (this.players.receiver.col < 10 && !this.getPlayerAt(this.players.receiver.col + 1, this.players.receiver.row)) {
                         this.players.receiver.moveRight();
                     }
                 }

@@ -21,9 +21,11 @@ class EventController {
         this.keydown = false;
         this.game;
 
-        $(".setting-form-wrapper input").on("keydown", this.changeKey.bind(this));
+        $(".setting-form-wrapper input[type='textfield']").on("keydown", this.changeKey.bind(this));
         $("input[name='field-speed']").on("change", this.changeSpeed.bind(this));
         $("input[name='field-difficulty']").on("change", this.changeMode.bind(this));
+        $("#sound-field").on("change", this.changeSound.bind(this));
+        $("#vibrate-field").on("change", this.changeVibrate.bind(this));
         $("#new-game-button").on("click", this.startGame.bind(this));
         $("#resume-game-button").on("click", this.resumeGame.bind(this));
 
@@ -74,6 +76,24 @@ class EventController {
     }
 
     /**
+     * @description Changes the sound setting of the game.
+     */
+    changeSound() {
+        if (typeof this.game !== "undefined") {
+            this.game.soundController.sound = $("#sound-field").is(":checked");
+        }
+    }
+
+    /**
+     * @description Changes the vibrate setting of the game.
+     */
+    changeVibrate() {
+        if (typeof this.game !== "undefined") {
+            this.game.soundController.vibrate = $("#vibrate-field").is(":checked");
+        }
+    }
+
+    /**
      * @description Starts the game.
      */
     startGame() {
@@ -83,7 +103,7 @@ class EventController {
         $(".open-settings").removeClass("open-settings");
         this.settingsOpen = false;
         this.game = new GameController(this.players);
-        this.game.startGame($("input[name='field-speed']:checked").val(), $("input[name='field-difficulty']:checked").val());
+        this.game.startGame($("#sound-field").is(":checked"), $("#vibrate-field").is(":checked"), $("input[name='field-speed']:checked").val(), $("input[name='field-difficulty']:checked").val());
     }
 
     /**
