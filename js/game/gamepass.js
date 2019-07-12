@@ -31,6 +31,7 @@ GameController.prototype.pass = function() {
                     this.isTouchdown = true;
                     this.stopPlay();
                 }
+                return;
             }
             // Interception
             if (player.position === "defense"){
@@ -48,6 +49,7 @@ GameController.prototype.pass = function() {
                     this.down = 1;
                     this.toGo = -99;
                     this.stopPlay(player);
+                    return;
                 }
             }
             // Incomplete pass
@@ -135,14 +137,14 @@ GameController.prototype.addReciever = function () {
     }
     this.players.receiver.setBlink("slow");
     this.players.receiver.turnOn();
-    this.movReceiver();
+    this.moveReceiver();
 }
 
-GameController.prototype.movReceiver = function () {
+GameController.prototype.moveReceiver = function () {
     setTimeout(function () {
         if (this.inPlay && this.players.receiver.onField) {
             var direction = Math.random();
-            if (direction > 0.66666) {
+            if (direction < 0.66666) {
                 if (this.players.qb.direction === 1) {
                     if (this.players.receiver.col > 1 && !this.getPlayerAt(this.players.receiver.col - 1, this.players.receiver.row)) {
                         this.players.receiver.moveLeft();
@@ -161,9 +163,9 @@ GameController.prototype.movReceiver = function () {
                     this.players.receiver.moveDown();
                 }
             }
-            this.movReceiver();
+            this.moveReceiver();
         }
-    }.bind(this), this.moveSpeed * Math.random() + 0.25);
+    }.bind(this), this.moveSpeed * 3 * Math.random());
 }
 
 GameController.prototype.getRandomOpen = function () {

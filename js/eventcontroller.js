@@ -20,6 +20,7 @@ class EventController {
         this.settingsOpen = true;
         this.keydown = false;
         this.game;
+        this.touched = false;
 
         $(".setting-form-wrapper input[type='textfield']").on("keydown", this.changeKey.bind(this));
         $("input[name='field-speed']").on("change", this.changeSpeed.bind(this));
@@ -30,9 +31,15 @@ class EventController {
         $("#resume-game-button").on("click", this.resumeGame.bind(this));
 
         $(document).on("keydown", this.emitEvent.bind(this));
-        $("button").on("mousedown", this.emitEvent.bind(this));
-        $(document).on("mouseup", this.keyUp.bind(this));
-        $(document).on("keyup", this.keyUp.bind(this));
+        $(".main button").on("mousedown touchstart", this.emitEvent.bind(this));
+        $(document).on("touchend", function (e) {
+            this.touched = true;
+            this.keyUp();
+            setTimeout(function () {
+                this.touched = false;
+            }.bind(this), 10);
+        }.bind(this));
+        $(document).on("mouseup touchend keyup", this.keyUp.bind(this));
     }
 
     /**
@@ -128,7 +135,7 @@ class EventController {
      */
     emitEvent(e) {
         var event;
-        if (this.keydown || this.settingsOpen) {
+        if (this.keydown || this.settingsOpen || this.touched) {
             return;
         }
         this.keydown = true;
@@ -189,7 +196,7 @@ class EventController {
     /**
      * @description Unlocks the controller when a key or mouse is released.
      */
-    keyUp() {
+    keyUp(e) {
         this.keydown = false;
         if (typeof this.game !== "undefined") {
             this.game.defaultScoreboard();
