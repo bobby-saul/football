@@ -80,8 +80,6 @@ GameController.prototype.startPlay = function () {
  * @description Function to stop the play.
  */
 GameController.prototype.stopPlay = function (defender) {
-    console.log("stop play:");
-    console.log(defender);
     clearInterval(this.timer);
     this.inPlay = false;
     this.kicking = false;
