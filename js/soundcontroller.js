@@ -39,7 +39,8 @@ class SoundController {
             this.sounds[sound].currentTime = 0;
             this.sounds[sound].play();
         }
-        if (this.vibrate) {
+        console.log(typeof window.navigator.vibrate);
+        if (this.vibrate && typeof window.navigator.vibrate === "function") {
             window.navigator.vibrate(this.vibrates[sound]);
         }
     }
